@@ -1,0 +1,6 @@
+model_list:
+  - model_name: bedrock-claude-4-sonnet
+    litellm_params:
+      model: bedrock/global.anthropic.claude-sonnet-4-20250514-v1:0
+      aws_region_name: os.environ/AWS_REGION_NAME
+      api_key: os.environ/BEDROCK_API_KEY
