@@ -1,6 +1,10 @@
 # LiteLLM Configuration for NanoClaw
 # Maps both Claude's official names AND Bedrock global inference IDs to AWS Bedrock endpoints
 
+# Strip unsupported parameters that Bedrock doesn't recognize
+litellm_settings:
+  drop_params: true  # Drop unsupported parameters instead of failing
+
 model_list:
   # ============================================
   # Bedrock Global Inference Model IDs (currently used by NanoClaw)
