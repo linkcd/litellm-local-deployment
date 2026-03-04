@@ -1,6 +1,54 @@
+# LiteLLM Configuration for NanoClaw
+# Maps both Claude's official names AND Bedrock global inference IDs to AWS Bedrock endpoints
+
 model_list:
-  - model_name: bedrock-claude-4-sonnet
+  # ============================================
+  # Bedrock Global Inference Model IDs (currently used by NanoClaw)
+  # ============================================
+
+  # Sonnet 4.6 - Global inference model
+  - model_name: global.anthropic.claude-sonnet-4-6
     litellm_params:
       model: bedrock/global.anthropic.claude-sonnet-4-20250514-v1:0
       aws_region_name: os.environ/AWS_REGION_NAME
       api_key: os.environ/BEDROCK_API_KEY
+
+  # Opus 4.6 - Global inference model
+  - model_name: global.anthropic.claude-opus-4-6-v1
+    litellm_params:
+      model: bedrock/global.anthropic.claude-opus-4-20250514-v1:0
+      aws_region_name: os.environ/AWS_REGION_NAME
+      api_key: os.environ/BEDROCK_API_KEY
+
+  # Haiku 4.5 - Global inference model
+  - model_name: global.anthropic.claude-haiku-4-5-20251001-v1:0
+    litellm_params:
+      model: bedrock/global.anthropic.claude-haiku-4-5-20251001-v1:0
+      aws_region_name: os.environ/AWS_REGION_NAME
+      api_key: os.environ/BEDROCK_API_KEY
+
+  # ============================================
+  # Claude Official Model Names 
+  # ============================================
+
+  # Claude Sonnet 4.5 (default for most tasks)
+  - model_name: claude-sonnet-4-5-20250929
+    litellm_params:
+      model: bedrock/global.anthropic.claude-sonnet-4-20250514-v1:0
+      aws_region_name: os.environ/AWS_REGION_NAME
+      api_key: os.environ/BEDROCK_API_KEY
+
+  # Claude Opus 4.6 (most capable, expensive)
+  - model_name: claude-opus-4-6
+    litellm_params:
+      model: bedrock/global.anthropic.claude-opus-4-20250514-v1:0
+      aws_region_name: os.environ/AWS_REGION_NAME
+      api_key: os.environ/BEDROCK_API_KEY
+
+  # Claude Haiku 4.5 (fastest, cheapest)
+  - model_name: claude-haiku-4-5-20251001
+    litellm_params:
+      model: bedrock/global.anthropic.claude-haiku-4-5-20251001-v1:0
+      aws_region_name: os.environ/AWS_REGION_NAME
+      api_key: os.environ/BEDROCK_API_KEY
+

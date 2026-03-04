@@ -28,7 +28,7 @@ POSTGRES_IMAGE="postgres:15-alpine"
 # LiteLLM Proxy Settings
 LITELLM_IMAGE="docker.litellm.ai/berriai/litellm:main-latest"
 LITELLM_PORT="4000"
-LITELLM_MODEL="bedrock-claude-4-sonnet"  # Model alias defined in config.yaml
+LITELLM_MODEL="claude-sonnet-4-5-20250929"  # Claude's official model name (NanoClaw compatible)
 # ============================================
 
 echo "========================================"

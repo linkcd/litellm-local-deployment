@@ -38,3 +38,17 @@ The script will:
 
 Edit `config.yaml` to add more models or change settings.
 Edit `run.sh` CONFIGURATION section for credentials and ports.
+
+## Virtual Keys
+
+To create virtual keys for usage tracking and budget management:
+
+```bash
+./create-keys.sh
+```
+
+See the script for virtual key creation and budget configuration.
+
+## NanoClaw Integration
+
+For using LiteLLM as a proxy for NanoClaw with per-group usage tracking, see [NANOCLAW-INTEGRATION.md](NANOCLAW-INTEGRATION.md).
