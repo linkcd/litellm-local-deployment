@@ -1,34 +1,22 @@
 #!/bin/bash
 
 # ============================================
-# CONFIGURATION
+# LOAD CONFIGURATION FROM .env FILE
 # ============================================
-# AWS Bedrock Configuration
-AWS_REGION_NAME="us-east-1"
-BEDROCK_API_KEY="ABSK...."  # Replace with your actual Bedrock API key
+if [ ! -f .env ]; then
+    echo "❌ Error: .env file not found!"
+    echo "📝 Please create a .env file from .env.example:"
+    echo "   cp .env.example .env"
+    echo "   Then edit .env and add your Bedrock API key"
+    exit 1
+fi
 
-# LiteLLM Authentication
-# LITELLM_MASTER_KEY: API key for authenticating requests to LiteLLM proxy
-LITELLM_MASTER_KEY="sk-admin"
-# UI_USERNAME/UI_PASSWORD: Credentials for accessing LiteLLM admin UI
-UI_USERNAME="admin"
-UI_PASSWORD="admin"
+# Load environment variables from .env file
+set -a  # automatically export all variables
+source .env
+set +a  # stop automatically exporting
 
-# Docker Network
-NETWORK_NAME="litellm-network"
-
-# PostgreSQL Database Settings
-POSTGRES_CONTAINER="litellm-postgres"
-POSTGRES_DB="litellm"
-POSTGRES_USER="litellm"
-POSTGRES_PASSWORD="litellm123"
-POSTGRES_PORT="5432"
-POSTGRES_IMAGE="postgres:15-alpine"
-
-# LiteLLM Proxy Settings
-LITELLM_IMAGE="docker.litellm.ai/berriai/litellm:main-latest"
-LITELLM_PORT="4000"
-LITELLM_MODEL="claude-sonnet-4-5-20250929"  # Claude's official model name (NanoClaw compatible)
+echo "✅ Loaded configuration from .env file"
 # ============================================
 
 echo "========================================"
@@ -41,6 +29,10 @@ docker network create $NETWORK_NAME 2>/dev/null || true
 
 echo ""
 echo "🗄️  Checking PostgreSQL..."
+# Create postgres data directory if it doesn't exist
+mkdir -p "$POSTGRES_DATA_DIR"
+echo "   📁 Using persistent storage at: $POSTGRES_DATA_DIR"
+
 if ! docker ps | grep -q $POSTGRES_CONTAINER; then
     echo "   Starting PostgreSQL container..."
     docker run -d \
@@ -49,9 +41,11 @@ if ! docker ps | grep -q $POSTGRES_CONTAINER; then
         -e POSTGRES_DB=$POSTGRES_DB \
         -e POSTGRES_USER=$POSTGRES_USER \
         -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+        -v "$(pwd)/$POSTGRES_DATA_DIR:/var/lib/postgresql/data" \
         -p $POSTGRES_PORT:5432 \
         $POSTGRES_IMAGE > /dev/null
     echo "   ✅ PostgreSQL started on port $POSTGRES_PORT"
+    echo "   💾 Data will persist in $POSTGRES_DATA_DIR"
     sleep 3
 else
     echo "   ✅ PostgreSQL already running"
