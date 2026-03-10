@@ -63,12 +63,12 @@ create_key() {
 # Remove old keys file
 rm -f /tmp/litellm-keys.env
 
-# Create keys for each group
-create_key "main" 50 "NanoClaw main group - control plane operations"
-create_key "dev-team" 100 "NanoClaw dev-team group - complex coding tasks"
-create_key "daily-news" 50 "NanoClaw daily-news group - news collection"
-create_key "publisher" 30 "NanoClaw publisher group - blog publishing"
-create_key "playground" 10 "NanoClaw playground group - testing"
+# Create keys for each group (budgets set to 5x original values)
+create_key "main" 250 "NanoClaw main group - control plane operations"
+create_key "dev-team" 500 "NanoClaw dev-team group - complex coding tasks"
+create_key "daily-news" 250 "NanoClaw daily-news group - news collection"
+create_key "publisher" 150 "NanoClaw publisher group - blog publishing"
+create_key "playground" 50 "NanoClaw playground group - testing"
 
 echo "=========================================="
 echo "✅ Virtual Keys Created!"
