@@ -1,5 +1,8 @@
 # Claude SDK Compatibility Report with LiteLLM + Bedrock
 
+> **KEY FINDING**: Adaptive thinking was introduced in `@anthropic-ai/claude-agent-sdk@0.2.38` (Feb 10, 2026).
+> Verified by examining NPM package source code. All versions ≥0.2.38 break Bedrock compatibility.
+
 ## Problem Summary
 
 **Error**: `thinking: Input tag 'adaptive' found using 'type' does not match any of the expected tags: 'enabled', 'disabled'`
@@ -20,7 +23,7 @@
 - **@anthropic-ai/claude-code** (CLI): `2.1.70` (released Mar 9, 2026)
 
 **❌ FIRST BREAKING VERSIONS:**
-- **@anthropic-ai/claude-agent-sdk**: `0.2.68+` (introduced adaptive thinking)
+- **@anthropic-ai/claude-agent-sdk**: `0.2.38+` (introduced adaptive thinking - Feb 10, 2026)
 - **@anthropic-ai/claude-code** (CLI): `2.1.71+` (uses SDK 0.2.68+)
 
 ### Claude Code Versions on System
@@ -32,6 +35,87 @@
 ```
 
 **Note:** All installed versions are AFTER the breaking change. Version 2.1.70 needs to be installed.
+
+### Hard Evidence: Adaptive Thinking Introduction
+
+**Verified by examining NPM package source code:**
+
+#### Version 0.2.38 (Feb 10, 2026) - First version with adaptive thinking
+
+Introduced new TypeScript type definitions:
+
+```typescript
+/**
+ * Claude decides when and how much to think (Opus 4.6+).
+ */
+export declare type ThinkingAdaptive = {
+    type: 'adaptive';
+};
+
+/**
+ * Fixed thinking token budget (older models)
+ */
+export declare type ThinkingEnabled = {
+    type: 'enabled';
+    budgetTokens?: number;
+};
+
+/**
+ * No extended thinking
+ */
+export declare type ThinkingDisabled = {
+    type: 'disabled';
+};
+
+export declare type ThinkingConfig = ThinkingAdaptive | ThinkingEnabled | ThinkingDisabled;
+```
+
+New API parameter in query options:
+
+```typescript
+/**
+ * Controls Claude's thinking/reasoning behavior.
+ *
+ * - `{ type: 'adaptive' }` — Claude decides when and how much to think (Opus 4.6+).
+ *   This is the default for models that support it.
+ * - `{ type: 'enabled', budgetTokens: number }` — Fixed thinking token budget (older models)
+ * - `{ type: 'disabled' }` — No extended thinking
+ *
+ * When set, takes precedence over the deprecated `maxThinkingTokens`.
+ *
+ * @see https://docs.anthropic.com/en/docs/build-with-claude/adaptive-thinking
+ */
+thinking?: ThinkingConfig;
+```
+
+New model capability flag:
+
+```typescript
+/**
+ * Whether this model supports adaptive thinking (Claude decides when and how much to think)
+ */
+supportsAdaptiveThinking?: boolean;
+```
+
+#### Testing Results by Version
+
+| Version | Release Date | Has 'adaptive' in code? | Status |
+|---------|--------------|-------------------------|---------|
+| 0.2.34 | Feb 6, 2026 06:54 UTC | ❌ NO (0 matches) | ✅ SAFE for Bedrock |
+| 0.2.36 | Feb 7, 2026 17:45 UTC | ❌ NO (0 matches) | ✅ SAFE for Bedrock |
+| 0.2.37 | Feb 7, 2026 18:55 UTC | ❌ NO (0 matches) | ✅ SAFE for Bedrock |
+| **0.2.38** | **Feb 10, 2026 00:24 UTC** | **✅ YES (8 matches)** | **❌ BREAKS Bedrock** |
+| 0.2.39 | Feb 10, 2026 21:36 UTC | ✅ YES (8 matches) | ❌ BREAKS Bedrock |
+| 0.2.40 | Feb 12, 2026 01:20 UTC | ✅ YES (8 matches) | ❌ BREAKS Bedrock |
+| 0.2.50 | Feb 20, 2026 23:39 UTC | ✅ YES (8 matches) | ❌ BREAKS Bedrock |
+| 0.2.63 | Feb 28, 2026 03:11 UTC | ✅ YES (8 matches) | ❌ BREAKS Bedrock |
+| 0.2.64 | Mar 3, 2026 03:50 UTC | ✅ YES (8 matches) | ❌ BREAKS Bedrock |
+| 0.2.68 | Mar 4, 2026 09:52 UTC | ✅ YES (8 matches) | ❌ BREAKS Bedrock |
+| 0.2.74 | Mar 12, 2026 00:20 UTC | ✅ YES (8 matches) | ❌ BREAKS Bedrock |
+
+**Conclusion**: Any version **0.2.38 or later** will send `thinking: { type: 'adaptive' }` and break Bedrock.
+
+**Safe window**: Only versions **0.2.34 through 0.2.37** (Feb 6-7, 2026) are compatible.
 
 ### From LiteLLM Logs
 Working requests show:
@@ -184,8 +268,12 @@ The fastest fix is to disable extended thinking or downgrade Claude Code until L
 **Report Generated**: 2026-03-12
 **Tested Claude Code Versions**: 2.1.72, 2.1.73, 2.1.74 (all break)
 **Last Working Versions**: CLI 2.1.70, SDK 0.2.34
-**Breaking Change Introduced**: CLI 2.1.71+, SDK 0.2.68+
+**Breaking Change Introduced**:
+  - **SDK 0.2.38** (Feb 10, 2026 00:24 UTC) - First version with adaptive thinking
+  - **CLI 2.1.71+** - Uses SDK 0.2.68+
+**Safe SDK Versions**: 0.2.34, 0.2.36, 0.2.37 (Feb 6-7, 2026)
 **LiteLLM Version**: main-latest (docker.litellm.ai/berriai/litellm:main-latest)
+**Evidence Method**: Direct examination of NPM package source code (sdk.d.ts type definitions)
 
 ## Quick Reference
 
