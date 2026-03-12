@@ -99,6 +99,32 @@ Note: This preserves data in `./postgres-data/` - only remove that directory if 
 - Check the key has permissions for Claude models in AWS Bedrock
 - Ensure `AWS_REGION_NAME` matches where your API key was created
 
+### "thinking: adaptive" errors
+If you see errors like `Input tag 'adaptive' found using 'type' does not match any of the expected tags`:
+- This is a Claude SDK compatibility issue
+- **Solution**: Pin to Claude Code 2.1.70 and SDK 0.2.34
+- See [SDK_COMPATIBILITY_REPORT.md](SDK_COMPATIBILITY_REPORT.md) for full details
+
+## Claude SDK Compatibility
+
+⚠️ **Known Issue**: Claude Code CLI versions 2.1.71+ and SDK versions 0.2.68+ send `thinking: {type: "adaptive"}` which LiteLLM doesn't translate properly for Bedrock.
+
+**Quick Fix:**
+```bash
+# Pin to last working version
+npm install -g @anthropic-ai/claude-code@2.1.70
+```
+
+**For package.json:**
+```json
+{
+  "@anthropic-ai/claude-agent-sdk": "0.2.34",
+  "@anthropic-ai/claude-code": "2.1.70"
+}
+```
+
+📖 **Full details and solutions**: See [SDK_COMPATIBILITY_REPORT.md](SDK_COMPATIBILITY_REPORT.md)
+
 ## NanoClaw Integration
 
 For using LiteLLM as a proxy for NanoClaw with per-group usage tracking, see [NANOCLAW-INTEGRATION.md](NANOCLAW-INTEGRATION.md).

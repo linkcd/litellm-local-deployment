@@ -1,9 +1,10 @@
 # LiteLLM Configuration for NanoClaw
 # Maps both Claude's official names AND Bedrock global inference IDs to AWS Bedrock endpoints
 
-# Strip unsupported parameters that Bedrock doesn't recognize
+# Allow thinking parameter through to Bedrock for extended thinking support
+# drop_params removed - LiteLLM should pass all parameters to Bedrock
 litellm_settings:
-  drop_params: true  # Drop unsupported parameters instead of failing
+  pass_through_endpoints: true  # Pass all parameters to underlying provider
 
 model_list:
   # ============================================
@@ -37,6 +38,13 @@ model_list:
 
   # Claude Sonnet 4.5 (default for most tasks)
   - model_name: claude-sonnet-4-5-20250929
+    litellm_params:
+      model: bedrock/global.anthropic.claude-sonnet-4-20250514-v1:0
+      aws_region_name: os.environ/AWS_REGION_NAME
+      api_key: os.environ/BEDROCK_API_KEY
+
+  # Claude Sonnet 4.6
+  - model_name: claude-sonnet-4-6
     litellm_params:
       model: bedrock/global.anthropic.claude-sonnet-4-20250514-v1:0
       aws_region_name: os.environ/AWS_REGION_NAME
