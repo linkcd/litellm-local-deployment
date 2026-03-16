@@ -5,6 +5,7 @@
 # drop_params removed - LiteLLM should pass all parameters to Bedrock
 litellm_settings:
   pass_through_endpoints: true  # Pass all parameters to underlying provider
+  callbacks: ["langfuse_otel"]  # Enable Langfuse observability via OpenTelemetry
 
 model_list:
   # ============================================

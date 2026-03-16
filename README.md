@@ -70,6 +70,49 @@ This creates separate keys for each NanoClaw group with individual budgets:
 
 Virtual keys are stored in PostgreSQL and persist across restarts. View usage and manage budgets in the Admin UI.
 
+## Observability with Langfuse
+
+LiteLLM integrates with [Langfuse](https://langfuse.com) for comprehensive observability and tracing:
+
+### Setup
+
+1. Create a Langfuse account at https://cloud.langfuse.com
+2. Get your API keys from the Langfuse dashboard
+3. Add them to your `.env` file:
+
+```bash
+LANGFUSE_PUBLIC_KEY=pk-lf-...
+LANGFUSE_SECRET_KEY=sk-lf-...
+LANGFUSE_OTEL_HOST=https://cloud.langfuse.com  # or https://us.cloud.langfuse.com for US region
+```
+
+4. Restart the proxy:
+
+```bash
+./run.sh
+```
+
+### What You Get
+
+Langfuse automatically traces all requests through the proxy:
+- **Request/Response data**: Full conversation history
+- **Token usage**: Input, output, and cached tokens
+- **Latency metrics**: Response times and performance
+- **Cost tracking**: Automatic cost calculation per request
+- **Model performance**: Success rates and error tracking
+- **User analytics**: Per-key usage patterns
+
+### Access Dashboard
+
+View your traces at https://cloud.langfuse.com
+
+### Configuration
+
+The integration uses OpenTelemetry and is configured in:
+- `config.yaml`: `callbacks: ["langfuse_otel"]`
+- `.env`: Langfuse credentials
+- `run.sh`: Passes environment variables to container
+
 ## Troubleshooting
 
 ### Container won't start
