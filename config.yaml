@@ -6,6 +6,11 @@
 litellm_settings:
   pass_through_endpoints: true  # Pass all parameters to underlying provider
   callbacks: ["langfuse_otel"]  # Enable Langfuse observability via OpenTelemetry
+  turn_off_message_logging: true  # Don't log request/response bodies to reduce bloat
+
+general_settings:
+  maximum_spend_logs_retention_period: "7d"  # Auto-delete logs older than 7 days
+  maximum_spend_logs_cleanup_cron: "0 4 * * *"  # Cleanup daily at 4am
 
 model_list:
   # ============================================

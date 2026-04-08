@@ -38,6 +38,8 @@ if ! docker ps | grep -q $POSTGRES_CONTAINER; then
     docker run -d \
         --name $POSTGRES_CONTAINER \
         --network $NETWORK_NAME \
+        --log-opt max-size=50m \
+        --log-opt max-file=3 \
         -e POSTGRES_DB=$POSTGRES_DB \
         -e POSTGRES_USER=$POSTGRES_USER \
         -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
@@ -64,6 +66,8 @@ echo "   Region: $AWS_REGION_NAME"
 docker run -d \
     --name litellm-proxy \
     --network $NETWORK_NAME \
+    --log-opt max-size=50m \
+    --log-opt max-file=3 \
     -v $(pwd)/config.yaml:/app/config.yaml \
     -e AWS_REGION_NAME=$AWS_REGION_NAME \
     -e BEDROCK_API_KEY=$BEDROCK_API_KEY \
@@ -76,7 +80,7 @@ docker run -d \
     -e LANGFUSE_OTEL_HOST=$LANGFUSE_OTEL_HOST \
     -p $LITELLM_PORT:4000 \
     $LITELLM_IMAGE \
-    --config /app/config.yaml --detailed_debug > /dev/null
+    --config /app/config.yaml > /dev/null
 
 echo "   ✅ LiteLLM proxy started"
 
